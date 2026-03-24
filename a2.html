@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A2 Shader Live Coding — IMGD/CS 4300</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap');
+    :root {
+      --bg:      #0a0a0f; --surface: #111118; --border: #1e1e2e;
+      --accent:  #7fff6a; --accent2: #6ab8ff; --accent3: #ff6a9b;
+      --text:    #d4d4e0; --muted:   #5a5a72; --radius:  6px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Space Mono', monospace; font-size: 14px; line-height: 1.8; }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px; opacity: .3; pointer-events: none; z-index: 0;
+    }
+    .wrap { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 56px 24px 120px; }
+    .nav { margin-bottom: 48px; font-size: 12px; color: var(--muted); }
+    .nav a { color: var(--accent2); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color .2s; }
+    .nav a:hover { border-color: var(--accent2); }
+    .hero { border-bottom: 1px solid var(--border); padding-bottom: 40px; margin-bottom: 52px; }
+    .a-tag { display: inline-block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 3px 10px; margin-bottom: 16px; }
+    h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(26px,5vw,44px); line-height: 1.1; color: #fff; margin-bottom: 14px; }
+    .subtitle { color: var(--muted); font-size: 13px; }
+    h2 { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+    h2::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    section { margin-bottom: 52px; }
+    .video-wrap { position: relative; padding-bottom: 56.25%; height: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .video-wrap iframe, .video-wrap .placeholder { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: var(--muted); font-size: 13px; }
+    .placeholder .icon { font-size: 36px; opacity: .4; }
+    .prose { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 28px; }
+    .prose p + p { margin-top: 14px; }
+    .prose strong { color: var(--accent2); }
+    .code-wrap { background: #0d0d14; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .code-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: var(--surface); border-bottom: 1px solid var(--border); font-size: 12px; color: var(--muted); }
+    .code-header a { color: var(--accent2); text-decoration: none; font-size: 11px; }
+    .code-header a:hover { text-decoration: underline; }
+    pre { padding: 20px; overflow-x: auto; font-family: 'Space Mono', monospace; font-size: 12.5px; line-height: 1.7; color: var(--text); }
+    .kw { color: #c792ea; } .fn { color: var(--accent2); } .num { color: #f78c6c; } .cmt { color: var(--muted); font-style: italic; } .typ { color: var(--accent); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; color: var(--muted); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; padding: 0 12px 10px 0; border-bottom: 1px solid var(--border); }
+    td { padding: 9px 12px 9px 0; border-bottom: 1px solid var(--border); vertical-align: top; }
+    td:first-child { color: var(--muted); font-size: 12px; }
+    td:nth-child(2) { color: var(--accent2); font-style: italic; white-space: nowrap; }
+    td:nth-child(3) { color: var(--muted); font-size: 12px; }
+    td:last-child   { color: var(--text); font-size: 12px; }
+    .disclosure { border: 1px solid var(--border); border-left: 3px solid var(--accent3); border-radius: var(--radius); padding: 14px 20px; font-size: 13px; color: var(--muted); }
+    .disclosure strong { color: var(--accent3); }
+    footer { border-top: 1px solid var(--border); padding-top: 24px; color: var(--muted); font-size: 12px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    footer a { color: var(--accent2); text-decoration: none; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="nav"><a href="index.html">&larr; back to course site</a></nav>
+
+  <div class="hero">
+    <span class="a-tag">Assignment 2</span>
+    <h1>Shader Live Coding<br>Echo Pulse</h1>
+    <p class="subtitle">IMGD/CS 4300 &nbsp;&middot;&nbsp; D-Term 2026 &nbsp;&middot;&nbsp; Performance recorded in wgsl_live</p>
+  </div>
+
+  <!-- Video -->
+  <section>
+    <h2>Performance Recording</h2>
+    <div class="video-wrap">
+      <!-- TODO: replace with your YouTube/Vimeo embed URL -->
+      <!-- <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID" frameborder="0" allowfullscreen></iframe> -->
+      <div class="placeholder">
+        <span class="icon">&#9654;</span>
+        <span>Replace this block with your YouTube / Vimeo embed</span>
+        <code style="font-size:11px;color:var(--muted)">duration &ge; 1 minute required</code>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technical Approach -->
+  <section>
+    <h2>Technical Approach</h2>
+    <div class="prose">
+      <p>
+        The shader runs entirely inside <strong>wgsl_live</strong>, a WebGPU fragment-shader
+        live-coding environment. Every pixel is computed per-frame in a single <code>@fragment</code>
+        function. The core visual engine is a <strong>frame-feedback loop</strong>:
+        <code>lastframe()</code> samples the previous frame through a slowly rotating UV transform
+        (<code>rotate()</code>), creating an accumulating echo-like trail that never quite repeats.
+      </p>
+      <p>
+        A <strong>Lissajous-drifting circle</strong> (<code>sin</code>/<code>cos</code> on the
+        centre point, soft edge via <code>smoothstep</code>) acts as the seed shape, while a
+        <strong>polar ripple field</strong> (<code>length</code>, <code>atan2</code>, nested
+        <code>sin</code>/<code>cos</code>) generates the radiating wave texture underneath.
+        Live audio drives the feedback weight via <code>audio[0]</code> (bass) and expands
+        the circle radius via <code>audio[2]</code> (highs). <code>pow</code> + scalar decay
+        prevent unbounded brightness accumulation, and a radial <code>smoothstep</code> vignette
+        darkens the edges. Mouse position shifts the feedback UV offset in real time.
+      </p>
+    </div>
+  </section>
+
+  <!-- Aesthetic Intent -->
+  <section>
+    <h2>Aesthetic Intent</h2>
+    <div class="prose">
+      <p>
+        The piece is interested in <strong>memory as texture</strong>: each frame is not erased
+        but rotated and folded back into itself, so the image accumulates its own history the way
+        an echo chamber accumulates sound. The drifting circle is less a shape than a cursor
+        &mdash; something that marks time by leaving a residue. The colour feels metabolic rather
+        than designed: R/G/B channels drift at incommensurable frequencies so the palette is never
+        the same twice, cycling through warm amber, cold teal, and brief flashes of magenta.
+      </p>
+      <p>
+        During the performance I treated the mouse as a physical instrument &mdash; small lateral
+        movements shear the feedback field, breaking rotational symmetry and introducing a sense
+        of breath or instability. Audio reactivity was kept subtle: the image should
+        <em>feel</em> alive to sound without obviously pulsing on the beat.
+      </p>
+    </div>
+  </section>
+
+  <!-- Source Code -->
+  <section>
+    <h2>Source Code</h2>
+    <div class="code-wrap">
+      <div class="code-header">
+        <span>a2.wgsl &nbsp;&middot;&nbsp; wgsl_live fragment shader</span>
+        <a href="a2.wgsl" download>download &darr;</a>
+      </div>
+      <pre><span class="cmt">// A2 Shader Live Coding &mdash; Echo Pulse</span>
+<span class="cmt">// IMGD/CS 4300, D-Term 2026 &nbsp;&middot;&nbsp; Ctrl+Enter to reload</span>
+
+<span class="kw">@fragment</span>
+<span class="kw">fn</span> <span class="fn">fs</span>( <span class="kw">@builtin</span>(position) pos : <span class="typ">vec4f</span> ) -&gt; <span class="kw">@location</span>(<span class="num">0</span>) <span class="typ">vec4f</span> {
+
+  <span class="kw">let</span> t   = <span class="fn">seconds</span>();
+  <span class="kw">let</span> uv0 = <span class="fn">uvN</span>( pos.xy );    <span class="cmt">// 0..1</span>
+  <span class="kw">var</span> p   = <span class="fn">uv</span>( pos.xy );      <span class="cmt">// -1..1</span>
+
+  <span class="kw">var</span> centre = <span class="typ">vec2f</span>( <span class="fn">sin</span>(t*<span class="num">1.1</span>)*<span class="num">.28</span>, <span class="fn">cos</span>(t*<span class="num">.85</span>)*<span class="num">.28</span> );
+  <span class="kw">let</span> d      = <span class="fn">distance</span>( p, centre );
+  <span class="kw">let</span> radius = <span class="num">.09</span> + audio[<span class="num">2</span>] * <span class="num">.06</span>;
+  <span class="kw">let</span> circle = <span class="num">1.0</span> - <span class="fn">smoothstep</span>( radius, radius+<span class="num">.03</span>, d );
+
+  <span class="kw">let</span> r      = <span class="fn">length</span>( p );
+  <span class="kw">let</span> angle  = <span class="fn">atan2</span>( p.y, p.x );
+  <span class="kw">let</span> ripple = <span class="fn">sin</span>( r*<span class="num">14.0</span> - t*<span class="num">2.5</span> + <span class="fn">cos</span>(angle*<span class="num">3.0</span>+t) )*<span class="num">.5</span>+<span class="num">.5</span>;
+
+  <span class="kw">let</span> rot = <span class="fn">rotate</span>( uv0, t/<span class="num">7.0</span> + <span class="fn">sin</span>(t*<span class="num">.3</span>)*<span class="num">.15</span> ) + mouse.xy*<span class="num">.06</span>;
+  <span class="kw">let</span> fb  = <span class="fn">lastframe</span>( <span class="fn">clamp</span>(rot, <span class="typ">vec2f</span>(<span class="num">0.</span>), <span class="typ">vec2f</span>(<span class="num">1.</span>)) );
+
+  <span class="kw">let</span> bass = <span class="num">.42</span> + audio[<span class="num">0</span>] * <span class="num">.65</span>;
+  <span class="kw">let</span> mid  = <span class="fn">abs</span>( <span class="fn">sin</span>(t*<span class="num">.6</span>) ) * <span class="num">.15</span> + audio[<span class="num">1</span>] * <span class="num">.1</span>;
+
+  <span class="kw">var</span> col  = fb * bass;
+  col.r += ripple * (<span class="num">.10</span> + mid);
+  col.g += ripple * <span class="fn">abs</span>( <span class="fn">sin</span>(t*<span class="num">.45</span>) ) * <span class="num">.08</span>;
+  col.b += (<span class="num">1.0</span> - ripple) * <span class="num">.07</span> + mid * <span class="num">.5</span>;
+
+  <span class="kw">let</span> stamp = <span class="typ">vec4f</span>(
+    <span class="fn">mix</span>(<span class="num">.3</span>, <span class="num">.95</span>, <span class="fn">fract</span>(t*<span class="num">.18</span>)),
+    <span class="fn">mix</span>(<span class="num">.6</span>,  <span class="num">.2</span>,  <span class="fn">fract</span>(t*<span class="num">.11</span>)),
+    <span class="fn">mix</span>(<span class="num">.8</span>,  <span class="num">.4</span>,  <span class="fn">fract</span>(t*<span class="num">.23</span>)),
+    <span class="num">1.0</span>
+  );
+  col += <span class="typ">vec4f</span>(circle) * stamp;
+
+  col  = <span class="fn">pow</span>( <span class="fn">clamp</span>(col, <span class="typ">vec4f</span>(<span class="num">0.</span>), <span class="typ">vec4f</span>(<span class="num">1.</span>)), <span class="typ">vec4f</span>(<span class="num">1.018</span>) ) * <span class="num">.965</span>;
+  col *= <span class="fn">smoothstep</span>( <span class="num">1.1</span>, <span class="num">.25</span>, r );
+
+  <span class="kw">return</span> <span class="fn">clamp</span>( col, <span class="typ">vec4f</span>(<span class="num">0.</span>), <span class="typ">vec4f</span>(<span class="num">1.</span>) );
+}</pre>
+    </div>
+  </section>
+
+  <!-- Function Table -->
+  <section>
+    <h2>Functions Used <span style="color:var(--muted);font-weight:400;font-size:11px;">(18 total &mdash; &ge;12 required)</span></h2>
+    <table>
+      <thead><tr><th>#</th><th>Function</th><th>Source</th><th>Role in shader</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>uvN()</td><td>wgsl_live</td><td>pixel &rarr; 0..1 UV</td></tr>
+        <tr><td>2</td><td>uv()</td><td>wgsl_live</td><td>pixel &rarr; -1..1 centred</td></tr>
+        <tr><td>3</td><td>seconds()</td><td>wgsl_live</td><td>elapsed time driver</td></tr>
+        <tr><td>4</td><td>rotate()</td><td>wgsl_live</td><td>spin feedback UV each frame</td></tr>
+        <tr><td>5</td><td>lastframe()</td><td>wgsl_live</td><td>previous frame &rarr; echo trail</td></tr>
+        <tr><td>6</td><td>audio[]</td><td>wgsl_live</td><td>bass / mid / high frequency</td></tr>
+        <tr><td>7</td><td>sin()</td><td>WGSL</td><td>centre drift, ripple, colour tempo</td></tr>
+        <tr><td>8</td><td>cos()</td><td>WGSL</td><td>centre drift, nested ripple</td></tr>
+        <tr><td>9</td><td>distance()</td><td>WGSL</td><td>circle SDF</td></tr>
+        <tr><td>10</td><td>smoothstep()</td><td>WGSL</td><td>soft edge + vignette</td></tr>
+        <tr><td>11</td><td>length()</td><td>WGSL</td><td>polar radius</td></tr>
+        <tr><td>12</td><td>atan2()</td><td>WGSL</td><td>polar angle</td></tr>
+        <tr><td>13</td><td>clamp()</td><td>WGSL</td><td>UV guard + colour clip</td></tr>
+        <tr><td>14</td><td>abs()</td><td>WGSL</td><td>unsigned modulation</td></tr>
+        <tr><td>15</td><td>mix()</td><td>WGSL</td><td>colour interpolation</td></tr>
+        <tr><td>16</td><td>fract()</td><td>WGSL</td><td>cyclic colour channels</td></tr>
+        <tr><td>17</td><td>pow()</td><td>WGSL</td><td>gamma decay on feedback</td></tr>
+        <tr><td>18</td><td>step()</td><td>WGSL</td><td>available for live edits</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Peer Feedback -->
+  <section>
+    <h2>Peer Feedback &amp; Reflection</h2>
+    <div class="prose">
+      <p>
+        <strong>[Placeholder &mdash; fill in after collecting peer feedback]</strong>
+        A classmate noted ...
+      </p>
+    </div>
+  </section>
+
+  <!-- LLM Disclosure -->
+  <section>
+    <h2>LLM Disclosure</h2>
+    <div class="disclosure">
+      <strong>LLM use:</strong> An AI assistant was used to scaffold the HTML/CSS of this page
+      and suggest initial parameter ranges for feedback decay and audio weights.
+      All WGSL shader logic, visual design, and performance choices are my own.
+      No significant shader code was generated by an LLM.
+    </div>
+  </section>
+
+  <footer>
+    <span>IMGD/CS 4300 &middot; D-Term 2026 &middot; WPI</span>
+    <a href="https://charlieroberts.github.io/wgsl_live/" target="_blank">wgsl_live playground &nearr;</a>
+  </footer>
+
+</div>
+</body>
+</html>

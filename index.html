@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IMGD/CS 4300 — Course Site</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap');
+
+    :root {
+      --bg:       #0a0a0f;
+      --surface:  #111118;
+      --border:   #1e1e2e;
+      --accent:   #7fff6a;
+      --accent2:  #6ab8ff;
+      --accent3:  #ff6a9b;
+      --text:     #d4d4e0;
+      --muted:    #5a5a72;
+      --radius:   6px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 14px;
+      line-height: 1.8;
+      min-height: 100vh;
+    }
+
+    /* ── background grid ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: .35;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 60px 24px 120px;
+    }
+
+    /* ── header ── */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 32px;
+      margin-bottom: 56px;
+    }
+
+    .course-tag {
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(28px, 5vw, 48px);
+      line-height: 1.1;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    h1 span { color: var(--accent); }
+
+    .meta {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .meta a {
+      color: var(--accent2);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color .2s;
+    }
+    .meta a:hover { border-color: var(--accent2); }
+
+    /* ── section titles ── */
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h2::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── assignment cards ── */
+    .cards {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 56px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: start;
+      gap: 20px;
+      transition: border-color .2s, transform .2s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .card-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--border);
+      line-height: 1;
+      user-select: none;
+    }
+
+    .card:hover .card-num { color: var(--accent); transition: color .2s; }
+
+    .card-body h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .card-body p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .card-status {
+      font-size: 11px;
+      letter-spacing: .08em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid;
+      white-space: nowrap;
+    }
+    .status-done   { color: var(--accent);  border-color: var(--accent);  }
+    .status-wip    { color: var(--accent2); border-color: var(--accent2); }
+    .status-todo   { color: var(--muted);   border-color: var(--border);  }
+
+    /* ── about section ── */
+    .about {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 56px;
+    }
+    .about p + p { margin-top: 12px; }
+
+    /* ── footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      color: var(--muted);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <header>
+      <p class="course-tag">WPI &nbsp;·&nbsp; D-Term 2026</p>
+      <h1>Graphics, Simulation<br>&amp; <span>Aesthetics</span></h1>
+      <p class="meta">
+        IMGD/CS 4300 &nbsp;·&nbsp; Instructor: Charlie Roberts &nbsp;·&nbsp;
+        <a href="https://github.com/charlieroberts/imgd_cs_4300_2026" target="_blank">Course Repo ↗</a>
+      </p>
+    </header>
+
+    <h2>Assignments</h2>
+    <div class="cards">
+
+      <a class="card" href="a2.html">
+        <span class="card-num">A1</span>
+        <div class="card-body">
+          <h3>Onboarding</h3>
+          <p>Discord · course website · PR to websites.md · Book of Shaders through Shapes · WebGPU intro reading</p>
+        </div>
+        <span class="card-status status-wip">in progress</span>
+      </a>
+
+      <a class="card" href="a2.html">
+        <span class="card-num">A2</span>
+        <div class="card-body">
+          <h3>Shader Live Coding</h3>
+          <p>1-min+ WGSL performance · 12+ functions · video · technical write-up · peer feedback</p>
+        </div>
+        <span class="card-status status-wip">in progress</span>
+      </a>
+
+      <div class="card" style="cursor:default;">
+        <span class="card-num">A3</span>
+        <div class="card-body">
+          <h3>XXX</h3>
+          <p>Coming — Week 3</p>
+        </div>
+        <span class="card-status status-todo">upcoming</span>
+      </div>
+
+    </div>
+
+    <h2>About</h2>
+    <div class="about">
+      <p>
+        This is my course website for IMGD/CS 4300: Graphics, Simulation, and Aesthetics at WPI, D-Term 2026.
+        The course explores parallel computing on GPUs, real-time graphics, and the history of analog visuals.
+      </p>
+      <p>
+        Assignments use WebGPU / WGSL / JavaScript. Each assignment page includes source code,
+        a recorded video, technical notes, and a reflection on the aesthetic choices made.
+      </p>
+    </div>
+
+    <footer>
+      <span>IMGD/CS 4300 · D-Term 2026 · WPI</span>
+      <a href="https://github.com/charlieroberts/wgsl_live" target="_blank">wgsl_live playground ↗</a>
+    </footer>
+
+  </div>
+</body>
+</html>
