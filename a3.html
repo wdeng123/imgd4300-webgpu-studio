@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A3: Chromatic Feedback — IMGD/CS 4300</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a0a0f;
+      color: #d4d4e0;
+      font-family: 'Space Mono', monospace;
+      font-size: 14px;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100vh;
+    }
+
+    .controls {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(10, 10, 15, 0.9);
+      border: 1px solid #1e1e2e;
+      border-radius: 6px;
+      padding: 20px;
+      z-index: 100;
+      max-width: 320px;
+      backdrop-filter: blur(10px);
+    }
+
+    .controls h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #7fff6a;
+      margin-bottom: 16px;
+    }
+
+    .control-group { margin-bottom: 16px; }
+
+    .control-group label {
+      display: block;
+      font-size: 12px;
+      color: #5a5a72;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      background: #1e1e2e;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #7fff6a;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #7fff6a;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover,
+    input[type="range"]::-moz-range-thumb:hover { background: #6ab8ff; }
+
+    .value-display {
+      display: inline-block;
+      float: right;
+      color: #7fff6a;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    button, .link-btn {
+      flex: 1;
+      padding: 8px 12px;
+      background: #111118;
+      border: 1px solid #1e1e2e;
+      color: #d4d4e0;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      text-align: center;
+      display: inline-block;
+    }
+
+    button:hover, .link-btn:hover {
+      border-color: #7fff6a;
+      color: #7fff6a;
+    }
+
+    button.active {
+      background: #7fff6a;
+      color: #0a0a0f;
+      border-color: #7fff6a;
+    }
+
+    .link-row { margin-top: 8px; }
+
+    .info {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(10, 10, 15, 0.9);
+      border: 1px solid #1e1e2e;
+      border-radius: 6px;
+      padding: 16px;
+      z-index: 100;
+      max-width: 330px;
+      font-size: 12px;
+      color: #5a5a72;
+      backdrop-filter: blur(10px);
+    }
+
+    .info p { margin-bottom: 8px; line-height: 1.6; }
+    .info p:last-child { margin-bottom: 0; }
+
+    .status {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #7fff6a;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    .status.off { background: #5a5a72; }
+
+    @media (max-width: 768px) {
+      .controls {
+        max-width: 260px;
+        padding: 16px;
+        top: 10px;
+        left: 10px;
+      }
+
+      .info {
+        bottom: 10px;
+        right: 10px;
+        max-width: 260px;
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas></canvas>
+
+  <div class="controls">
+    <h3>Chromatic Feedback</h3>
+
+    <div class="button-group">
+      <button id="videoToggle" class="active">Video: ON</button>
+      <button id="noiseToggle" class="active">Noise: ON</button>
+    </div>
+
+    <div class="control-group">
+      <label>Feedback Intensity <span class="value-display" id="feedbackValue">0.85</span></label>
+      <input type="range" id="feedbackSlider" min="0" max="1" step="0.01" value="0.85">
+    </div>
+
+    <div class="control-group">
+      <label>Noise Scale <span class="value-display" id="noiseScaleValue">2.5</span></label>
+      <input type="range" id="noiseScaleSlider" min="0.5" max="8" step="0.1" value="2.5">
+    </div>
+
+    <div class="control-group">
+      <label>Chromatic Shift <span class="value-display" id="chromaticValue">0.015</span></label>
+      <input type="range" id="chromaticSlider" min="0" max="0.05" step="0.001" value="0.015">
+    </div>
+
+    <div class="control-group">
+      <label>Color Rotation <span class="value-display" id="colorRotValue">0.0</span></label>
+      <input type="range" id="colorRotSlider" min="0" max="6.28" step="0.01" value="0">
+    </div>
+
+    <div class="link-row">
+      <a class="link-btn" href="a3-doc.html" target="_blank">Open Documentation</a>
+    </div>
+  </div>
+
+  <div class="info">
+    <p><span class="status" id="videoStatus"></span> Video: <span id="videoStatusText">Ready</span></p>
+    <p><span class="status" id="noiseStatus"></span> Noise: <span id="noiseStatusText">Active</span></p>
+    <p style="color: #7fff6a; margin-top: 12px; font-size: 11px;">Allow camera access for best results.</p>
+  </div>
+
+  <script src="a3.js" type="module"></script>
+</body>
+</html>

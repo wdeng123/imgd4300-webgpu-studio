@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A3 Documentation — Chromatic Feedback</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Fraunces:opsz,wght@9..144,400;9..144,700&display=swap');
+
+    :root {
+      --bg: #0b0f13;
+      --panel: #121922;
+      --ink: #dbe3ec;
+      --muted: #7f90a4;
+      --line: #263141;
+      --accent: #6ef3c5;
+      --accent2: #8db4ff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: radial-gradient(circle at 10% 10%, #111f2e 0%, var(--bg) 45%) fixed;
+      color: var(--ink);
+      font-family: 'IBM Plex Mono', monospace;
+      line-height: 1.75;
+      padding: 48px 20px 90px;
+    }
+
+    .wrap { max-width: 900px; margin: 0 auto; }
+
+    .topnav { margin-bottom: 24px; }
+    .topnav a {
+      color: var(--accent2);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+    }
+    .topnav a:hover { border-color: var(--accent2); }
+
+    header {
+      border: 1px solid var(--line);
+      background: color-mix(in oklab, var(--panel), black 12%);
+      border-radius: 10px;
+      padding: 22px 24px;
+      margin-bottom: 28px;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(28px, 5vw, 46px);
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+
+    .sub { color: var(--muted); font-size: 13px; }
+
+    section {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+      padding: 20px 22px;
+      margin-bottom: 18px;
+    }
+
+    h2 {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    p + p { margin-top: 12px; }
+
+    ul { padding-left: 20px; }
+    li { margin: 6px 0; }
+
+    code {
+      background: #0f141b;
+      border: 1px solid #263141;
+      padding: 1px 6px;
+      border-radius: 6px;
+      color: #b8d4ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topnav"><a href="a3.html">← Back to A3 shader</a> · <a href="index.html">course index</a></div>
+
+    <header>
+      <div class="tag">Assignment 3 · WebGPU Intro</div>
+      <h1>Chromatic Feedback</h1>
+      <p class="sub">Technical explanation, aesthetic intent, and peer feedback</p>
+    </header>
+
+    <section>
+      <h2>Technical Summary</h2>
+      <p>
+        This piece is a fullscreen WebGPU fragment shader built with <code>gulls.js</code>. It combines the current webcam frame with the previous rendered frame stored in a persistent backbuffer. Per pixel it blends them using <code>out = v * 0.05 + last * 0.95</code>, while a sin/cos UV warp (driven by the feedback intensity slider) shifts where each sample is taken. I then add an FBM layer generated from value noise (5 octaves), sampled with both spatial and time offsets to produce soft turbulence.
+      </p>
+      <p>
+        The composition is controlled by six interactions: four sliders (feedback intensity, noise scale, chromatic shift, color rotation) plus two toggles (video on/off, noise on/off). Chromatic separation is done by sampling R and B channels at opposite offsets around the warped UV. A lightweight vignette keeps the eye centered. If camera capture fails, the project automatically switches to a webcam-independent shader variant (noise + backbuffer echo) while preserving the controls, so the piece still runs and can be critiqued on any machine.
+      </p>
+    </section>
+
+    <section>
+      <h2>Aesthetic Intent</h2>
+      <p>
+        My visual goal was to treat the webcam as unstable matter instead of identity documentation. I wanted the image to feel like a membrane: recognizable for a second, then absorbed into a noisy fluid field. The project leans into controlled disorientation—color channels separate, edges drift, and texture breathes in cycles. Rather than maximizing glitch, I aimed for a narrow zone between beauty and signal loss.
+      </p>
+      <p>
+        I constrained myself to one full-screen plane and a dark interface, so all complexity had to emerge from temporal modulation and sampling decisions. The palette comes primarily from the camera itself, but chromatic offsets and rotation skew it into synthetic tones. The result should feel intimate and slightly uncanny: users see themselves, but only as a transforming light event.
+      </p>
+    </section>
+
+    <section>
+      <h2>Peer Feedback</h2>
+      <p>
+        My classmate said the piece felt "meditative until the feedback goes high, then suddenly chaotic," which matched my expectation and confirmed that the slider range has a meaningful tipping point. They especially liked the RGB split because it made motion feel deeper than the flat screen. One mismatch with my expectation was that color rotation read as subtle to them; I expected it to be more immediately obvious. I may amplify this parameter in a future revision.
+      </p>
+      <p>
+        On compatibility: camera capture worked on my machine and in Chromium, but my classmate initially blocked permission and got the fallback mode. They were still able to evaluate interactions and noise behavior, which validated the fallback path as a practical submission safeguard.
+      </p>
+    </section>
+
+    <section>
+      <h2>Links</h2>
+      <ul>
+        <li>Project page: <code>a3.html</code></li>
+        <li>Source code: <code>a3.js</code></li>
+        <li>Course index: <code>index.html</code></li>
+      </ul>
+    </section>
+  </div>
+</body>
+</html>
