@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A5: Particle Burst Field — IMGD/CS 4300</title>
+  <style>
+    :root {
+      --bg: #050810;
+      --panel: rgba(10, 16, 26, 0.78);
+      --line: rgba(120, 170, 255, 0.25);
+      --ink: #d8e4ff;
+      --muted: #90a2c0;
+      --accent: #7dd9ff;
+      --accent2: #ffc37a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: var(--ink); }
+    body { font-family: "IBM Plex Mono", monospace; }
+    canvas { width: 100%; height: 100%; display: block; }
+
+    .top {
+      position: fixed;
+      left: 16px;
+      right: 16px;
+      top: 16px;
+      z-index: 3;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(8, 14, 23, 0.92), rgba(8, 14, 23, 0.65));
+      backdrop-filter: blur(12px);
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .title { font-size: 13px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; }
+    .subtitle { color: var(--muted); font-size: 12px; }
+
+    .btn {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--ink);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font: inherit;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .panel {
+      position: fixed;
+      left: 16px;
+      bottom: 16px;
+      width: min(360px, calc(100vw - 32px));
+      z-index: 3;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+      backdrop-filter: blur(14px);
+      padding: 14px;
+    }
+
+    .row { margin-bottom: 12px; }
+    .row:last-child { margin-bottom: 0; }
+    .label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+    .label span:first-child { color: var(--ink); }
+    .label span:last-child { color: var(--accent2); }
+
+    input[type="range"] { width: 100%; }
+
+    .hud {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 3;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 12px;
+      color: var(--muted);
+      min-width: 180px;
+    }
+    .hud strong { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <canvas></canvas>
+
+  <div class="top">
+    <div>
+      <div class="title">Assignment 5 · Particle Burst Field</div>
+      <div class="subtitle">Click and drag to spawn bursts. Tune gravity, drag, and explosion energy.</div>
+    </div>
+    <div>
+      <button class="btn" id="pauseBtn">Pause: Off</button>
+      <button class="btn" id="burstBtn">Center Burst</button>
+      <a class="btn" href="a5-doc.html" target="_blank">A5 Notes</a>
+      <a class="btn" href="index.html">Course Index</a>
+    </div>
+  </div>
+
+  <aside class="panel">
+    <div class="row">
+      <div class="label"><span>Gravity</span><span id="gravityValue">1.35</span></div>
+      <input id="gravitySlider" type="range" min="0.10" max="3.00" step="0.01" value="1.35" />
+    </div>
+    <div class="row">
+      <div class="label"><span>Drag</span><span id="dragValue">0.22</span></div>
+      <input id="dragSlider" type="range" min="0.00" max="1.20" step="0.01" value="0.22" />
+    </div>
+    <div class="row">
+      <div class="label"><span>Burst Energy</span><span id="burstValue">1.15</span></div>
+      <input id="burstSlider" type="range" min="0.20" max="2.60" step="0.01" value="1.15" />
+    </div>
+    <div class="row">
+      <div class="label"><span>Burst Radius</span><span id="radiusValue">0.16</span></div>
+      <input id="radiusSlider" type="range" min="0.04" max="0.40" step="0.01" value="0.16" />
+    </div>
+  </aside>
+
+  <aside class="hud">
+    <div><strong>Status:</strong> GPU particle simulation</div>
+    <div id="fpsText">-- fps</div>
+    <div style="margin-top:6px;">Tip: hold mouse to paint an active emission area.</div>
+  </aside>
+
+  <script type="module" src="a5.js"></script>
+</body>
+</html>

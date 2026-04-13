@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A5 Notes — Particle Burst Field</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px 18px 80px;
+      background: #0a0f18;
+      color: #d8e4ff;
+      font-family: "IBM Plex Mono", monospace;
+      line-height: 1.75;
+    }
+    .wrap { max-width: 860px; margin: 0 auto; }
+    h1, h2 { font-family: "Syne", sans-serif; }
+    h1 { font-size: 34px; margin-bottom: 8px; }
+    h2 { margin-top: 28px; font-size: 16px; color: #88d6ff; }
+    p { color: #b8c8e6; }
+    a { color: #89c7ff; }
+    .meta { color: #89a0c5; font-size: 13px; margin-bottom: 24px; }
+    .card {
+      border: 1px solid rgba(121, 159, 219, 0.28);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-top: 16px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>A5 — Particle Burst Field</h1>
+    <div class="meta">IMGD/CS 4300 · D-Term 2026 · WebGPU / WGSL</div>
+
+    <h2>Inspiration</h2>
+    <p>
+      I based this piece on stylized spark-and-firework bursts that appear in many action games,
+      especially when abilities collide and leave bright, short-lived trails. One reference I used
+      was this gameplay montage for timing and density cues:
+      <a href="https://youtu.be/DeZ2Q9SyK88?si=PLonbAc4Yck_2h42" target="_blank">Gameplay reference video</a>.
+      I did not try to copy one exact game effect frame-by-frame; instead, I focused on emulating the
+      feeling of clustered bursts, quick cooling, and gravity pullback.
+    </p>
+
+    <h2>What I Built</h2>
+    <p>
+      The simulation uses a GPU compute pass to update several thousand particles each frame. Each particle
+      stores position, velocity, lifespan, and a random seed. During each update it applies gravity and drag,
+      moves forward using the frame timestep, and respawns when life expires or the particle leaves the visible
+      area. Respawn can happen from a default launcher near the bottom center, or from the pointer area when the
+      mouse button is pressed. This produces a stream-like fountain by default and denser local explosions during
+      interaction. A second render pass draws particles as additive blended quads, where color and alpha depend on
+      speed and remaining life to produce a warm/cool energy gradient.
+    </p>
+    <p>
+      I exposed four controls: <strong>gravity</strong>, <strong>drag</strong>, <strong>burst energy</strong>,
+      and <strong>burst radius</strong>. Gravity changes arc shape and fall speed; drag controls how quickly
+      movement decays; burst energy sets initial velocity spread; and burst radius controls how large the spawn
+      region is for pointer-triggered emission. Together these controls let me shift the look between tight sparks,
+      airy confetti, and heavy meteor-like drops while keeping the same core system.
+    </p>
+
+    <h2>Feedback Summary</h2>
+    <div class="card">
+      <p>
+        Classmate feedback: the current version successfully reads as “game-like impact sparks,” especially with
+        low drag and medium burst energy. Suggested improvements included adding occasional larger particles for
+        visual hierarchy and introducing a subtle color mode toggle for different moods. I agree with both points;
+        the next iteration would likely add a second particle layer for embers and a palette switch preset.
+      </p>
+    </div>
+
+    <h2>Links</h2>
+    <p>
+      Project: <a href="a5.html">Run A5 particle piece</a><br />
+    </p>
+  </div>
+</body>
+</html>

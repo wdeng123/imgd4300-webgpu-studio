@@ -16,12 +16,16 @@ WPI · D-Term 2026 · Instructor: Charlie Roberts
 | `a4.html` | A4 reaction-diffusion project |
 | `a4.js` | A4 compute shader + controls |
 | `a4-doc.html` | A4 technical + aesthetic explanation |
+| `a5.html` | A5 particle simulation project |
+| `a5.js` | A5 compute + render particle pipeline |
+| `a5-doc.html` | A5 technical + aesthetic explanation |
 | `A1_A2_Checklist.md` | Personal submission checklist |
 
 ## Assignment Notes
 
 - **A3** is a fullscreen fragment-shader piece with webcam feedback, noise, and chromatic distortion.
 - **A4** is a GPU Gray–Scott reaction-diffusion simulation with live controls for `feed`, `kill`, `diffusion A`, and `diffusion B`, plus a flow-field option and click-based painting.
+- **A5** is a WebGPU particle burst system with real-time controls for gravity, drag, burst energy, and spawn radius.
 
 ## Deployment
 
