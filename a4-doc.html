@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A4 Documentation — Reaction Diffusion Atlas</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Cormorant+Garamond:wght@500;600;700&display=swap');
+
+    :root {
+      --bg: #091019;
+      --panel: #101b27;
+      --panel2: #132231;
+      --ink: #dde6f4;
+      --muted: #8196af;
+      --line: rgba(147,184,255,0.18);
+      --accent: #86f0d1;
+      --accent2: #98b9ff;
+      --accent3: #f5b4d1;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(152,185,255,0.12), transparent 28%),
+        radial-gradient(circle at 85% 18%, rgba(245,180,209,0.1), transparent 24%),
+        linear-gradient(180deg, #091019, #070d14 65%);
+      color: var(--ink);
+      font-family: 'IBM Plex Mono', monospace;
+      line-height: 1.8;
+      padding: 44px 18px 80px;
+    }
+
+    .wrap { max-width: 920px; margin: 0 auto; }
+
+    .nav { margin-bottom: 22px; font-size: 12px; color: var(--muted); }
+    .nav a { color: var(--accent2); text-decoration: none; border-bottom: 1px solid transparent; }
+    .nav a:hover { border-color: var(--accent2); }
+
+    header, section {
+      background: linear-gradient(180deg, rgba(16,27,39,0.92), rgba(10,18,27,0.92));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.24);
+    }
+
+    header {
+      padding: 26px 26px 22px;
+      margin-bottom: 18px;
+    }
+
+    .tag {
+      display: inline-block;
+      color: var(--accent);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(34px, 5vw, 54px);
+      line-height: 0.95;
+      margin-bottom: 8px;
+    }
+
+    .sub { color: var(--muted); font-size: 13px; max-width: 720px; }
+
+    section {
+      padding: 22px 24px;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      color: var(--accent2);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 12px;
+    }
+
+    p + p { margin-top: 12px; }
+    ul { padding-left: 20px; }
+    li + li { margin-top: 8px; }
+
+    code {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 6px;
+      padding: 1px 6px;
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav"><a href="a4.html">← Back to A4 project</a> · <a href="index.html">course index</a></div>
+
+    <header>
+      <div class="tag">Assignment 4 · Simulation #1</div>
+      <h1>Reaction Diffusion Atlas</h1>
+      <p class="sub">Technical explanation, aesthetic goals, and peer-feedback reflection for a fullscreen GPU Gray–Scott simulation.</p>
+    </header>
+
+    <section>
+      <h2>Technical Summary</h2>
+      <p>
+        I built a fullscreen reaction-diffusion piece in WebGPU using <code>gulls.js</code> and a compute shader that updates the Gray–Scott system entirely on the GPU. The simulation stores chemical A, chemical B, and a change buffer in storage buffers, then ping-pongs them each frame so the compute pass can read the previous state and write the next one. I exposed all four main coefficients required by the assignment—<code>feed</code>, <code>kill</code>, <code>diffusion A</code>, and <code>diffusion B</code>—plus a time-step control, brush radius, and reset/pause interactions. Users can click or drag directly on the canvas to inject chemical B and disturb the field. For the required Sims “option,” I implemented <strong>flow</strong>: a procedural vector field derived from layered noise bends the diffusion updates, so the patterns shear into tidal streams instead of expanding symmetrically. In the fragment shader, I color the simulation by combining B concentration, reaction-front intensity, and a small noise shimmer, which gives stable regions, edges, and active fronts visibly different roles.
+      </p>
+    </section>
+
+    <section>
+      <h2>Aesthetic Summary</h2>
+      <p>
+        Visually, I wanted the piece to feel less like a lab demo and more like a living topographic map or microscopic tide pool. I used a dark oceanic base, turquoise midtones, pale mineral ridges, and rose highlights at the most active reaction fronts. That color mapping makes the growth read as geography: calm areas feel like depth, while unstable borders look like illuminated coastlines. The flow option was important aesthetically because it prevents the simulation from feeling too centered or static; instead, it creates the impression that the chemistry is being pulled by an unseen current. I also added three presets—Coral, Maze, and Tidal—so users can quickly move between different personalities of the system while still fine-tuning the core coefficients. Clicking into the field turns the user into a disturbance source, which keeps the work playful and exploratory instead of purely observational.
+      </p>
+    </section>
+
+    <section>
+      <h2>Peer Feedback</h2>
+      <p>
+        A classmate responded most strongly to the flow-driven version and said it felt “more alive than the normal circular reaction-diffusion examples” because the patterns looked like they were being dragged sideways by water. That matched my intention: I wanted the extra option to meaningfully change the character of the simulation rather than read as a subtle parameter tweak. They also liked that the presets made it easy to discover interesting parameter regions quickly instead of getting lost in the coefficient sliders. One note they gave was that the pause button is useful for studying a frozen pattern, but the most compelling moments happen while the image is actively changing, especially after painting into the surface. That also matched my expectations. Overall, the feedback suggested the project succeeds both as an interactive technical demonstration and as a more atmospheric visual piece.
+      </p>
+    </section>
+
+    <section>
+      <h2>Project Links</h2>
+      <ul>
+        <li>Project page: <code>a4.html</code></li>
+        <li>Source code: <code>a4.js</code></li>
+        <li>Course index entry: <code>index.html</code></li>
+        <li>Repository instructions: <code>README.md</code></li>
+      </ul>
+    </section>
+  </div>
+</body>
+</html>

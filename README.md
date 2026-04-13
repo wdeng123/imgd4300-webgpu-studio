@@ -10,17 +10,23 @@ WPI · D-Term 2026 · Instructor: Charlie Roberts
 | `index.html` | Course home page — lists all assignments |
 | `a2.html` | A2: Shader Live Coding write-up page |
 | `a2.wgsl` | WGSL fragment shader used in A2 performance |
+| `a3.html` | A3 interactive WebGPU project |
+| `a3.js` | A3 shader / interaction logic |
+| `a3-doc.html` | A3 technical + aesthetic explanation |
+| `a4.html` | A4 reaction-diffusion project |
+| `a4.js` | A4 compute shader + controls |
+| `a4-doc.html` | A4 technical + aesthetic explanation |
 | `A1_A2_Checklist.md` | Personal submission checklist |
 
-## A2 Quick Start
+## Assignment Notes
 
-1. Open [wgsl_live playground](https://charlieroberts.github.io/wgsl_live/) in Chrome or Edge.
-2. Paste the contents of `a2.wgsl` into the editor.
-3. Press `Ctrl+Enter` to compile and run.
-4. Hit **Audio On** to enable FFT reactivity.
-5. Move the mouse to shift the feedback field.
+- **A3** is a fullscreen fragment-shader piece with webcam feedback, noise, and chromatic distortion.
+- **A4** is a GPU Gray–Scott reaction-diffusion simulation with live controls for `feed`, `kill`, `diffusion A`, and `diffusion B`, plus a flow-field option and click-based painting.
 
 ## Deployment
 
-Host via GitHub Pages (push to `main`, enable Pages in repo settings)  
-or any static host. All files are plain HTML/CSS/WGSL — no build step needed.
+Host via GitHub Pages or any static host. After deployment, make sure the course homepage links to:
+
+- the running project page,
+- the repository,
+- and the explanation page for each assignment.

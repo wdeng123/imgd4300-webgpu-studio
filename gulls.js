@@ -583,7 +583,7 @@ const gulls = {
   },
 
   render( encoder, passDesc ) {
-    const shouldCopy = passDesc.context !== null || passDesc.copy !== nulll
+    const shouldCopy = passDesc.context !== null || passDesc.copy != null
 
     const renderPassDescriptor = {
       label: 'render',
@@ -629,10 +629,17 @@ const gulls = {
 
     pass.setVertexBuffer( 0, passDesc.vertexBuffer )
 
-    // only switch bindgroups if pingpong is needed
-    const bindGroupIndex = passDesc.shouldPingPong === true ? pass.step++ % 2 : 0
-
-    pass.setBindGroup( 0, passDesc.renderBindGroups[ bindGroupIndex ] )
+    const groups = passDesc.renderBindGroups
+    const n = Array.isArray( groups ) ? groups.length : 0
+    const wantSwap = passDesc.shouldPingPong === true && n > 1
+    let bindGroupIndex = 0
+    if( wantSwap ) {
+      const s = Number( passDesc.step ) || 0
+      bindGroupIndex = s % n
+      passDesc.step = s + 1
+    }
+    const bg0 = n > 0 ? groups[ bindGroupIndex ] || groups[ 0 ] : null
+    if( bg0 ) pass.setBindGroup( 0, bg0 )
 
     if( useVideo ) { 
       pass.setBindGroup( 1, externalTextureBindGroup ) 
@@ -985,6 +992,7 @@ const gulls = {
 
     async once( ...passes ) {
       const encoder = this.device.createCommandEncoder({ label: 'gulls encoder' })
+      let lastComputeStep = null
       for( let pass of passes ) {
         try {
           if( typeof pass.onframe === 'function' ) await pass.onframe()
@@ -992,10 +1000,15 @@ const gulls = {
           console.warn('caught error with onframe for ' + pass.type + ' pass.', e ) 
         }
 
-        if( pass.type === 'render' ) {
-          pass.step = await gulls.render( encoder, pass )
-        }else if( pass.type === 'compute' ) {
+        if( pass.type === 'compute' ) {
           pass.step = gulls.pingpong( encoder, pass )
+          lastComputeStep = pass.step
+        }else if( pass.type === 'render' ) {
+          if( lastComputeStep !== null && pass.shouldPingPong === true ) {
+            pass.step = lastComputeStep > 0 ? lastComputeStep - 1 : 0
+          }
+          pass.step = gulls.render( encoder, pass )
+          lastComputeStep = null
         }else if( pass.type === 'copy' ) {
           await encoder.copyBufferToBuffer(
             pass.src,    /* source buffer */
