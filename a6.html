@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A6: Langton Vants — IMGD/CS 4300</title>
+  <style>
+    :root {
+      --bg: #070b12;
+      --panel: rgba(12, 17, 27, 0.82);
+      --line: rgba(119, 167, 255, 0.25);
+      --ink: #dbe7ff;
+      --muted: #90a3c5;
+      --accent: #8fd3ff;
+      --accent2: #ffd084;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: var(--ink); }
+    body { font-family: "IBM Plex Mono", monospace; }
+    canvas { width: 100%; height: 100%; display: block; }
+
+    .top {
+      position: fixed;
+      left: 16px;
+      right: 16px;
+      top: 16px;
+      z-index: 3;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(9, 15, 24, 0.92), rgba(9, 15, 24, 0.68));
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .title { font-size: 13px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; }
+    .subtitle { font-size: 12px; color: var(--muted); }
+
+    .btn {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font: inherit;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { color: var(--accent); border-color: var(--accent); }
+
+    .panel {
+      position: fixed;
+      left: 16px;
+      bottom: 16px;
+      width: min(360px, calc(100vw - 32px));
+      z-index: 3;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      backdrop-filter: blur(12px);
+      background: var(--panel);
+      padding: 14px;
+    }
+
+    .label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+    .label span:last-child { color: var(--accent2); }
+    input[type="range"] { width: 100%; }
+
+    .hud {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 3;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+      padding: 12px 14px;
+      min-width: 220px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .hud strong { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <canvas></canvas>
+
+  <div class="top">
+    <div>
+      <div class="title">Assignment 6 · Langton Vants</div>
+      <div class="subtitle">Three ant behaviors share one pheromone field and generate mixed emergent patterns.</div>
+    </div>
+    <div>
+      <button class="btn" id="pauseBtn">Pause: Off</button>
+      <button class="btn" id="resetBtn">Reset</button>
+      <a class="btn" href="a6-doc.html" target="_blank">A6 Notes</a>
+      <a class="btn" href="index.html">Course Index</a>
+    </div>
+  </div>
+
+  <aside class="panel">
+    <div class="label">
+      <span>Step Size per Frame</span>
+      <span id="stepsValue">1</span>
+    </div>
+    <input id="stepsSlider" type="range" min="1" max="4" step="1" value="1" />
+  </aside>
+
+  <aside class="hud">
+    <div><strong>Frame:</strong> <span id="frameText">0</span></div>
+    <div><strong>Behavior Focus:</strong> <span id="modeText">Classic 90°</span></div>
+    <div style="margin-top:8px;">Red = classic · Blue = diagonal · Gold = timer-reset.</div>
+  </aside>
+
+  <script type="module" src="a6.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A6 Notes — Langton Vants</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px 18px 80px;
+      background: #0a0f18;
+      color: #d8e4ff;
+      font-family: "IBM Plex Mono", monospace;
+      line-height: 1.75;
+    }
+    .wrap { max-width: 860px; margin: 0 auto; }
+    h1, h2 { font-family: "Syne", sans-serif; }
+    h1 { font-size: 34px; margin-bottom: 8px; }
+    h2 { margin-top: 28px; font-size: 16px; color: #88d6ff; }
+    p { color: #b8c8e6; }
+    a { color: #89c7ff; }
+    .meta { color: #89a0c5; font-size: 13px; margin-bottom: 24px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>A6 — Langton Vants</h1>
+    <div class="meta">IMGD/CS 4300 · D-Term 2026 · WebGPU / WGSL</div>
+
+    <h2>Behavior Design</h2>
+    <p>
+      For this assignment I implemented three ant types on a shared pheromone grid. The first type is the canonical
+      Langton behavior: if it finds pheromone, it turns 90° one way and removes the mark; otherwise it turns 90° the
+      opposite way and leaves a mark. The second type is a diagonal variant that uses 45° turns instead of 90°, which
+      makes curved, braided paths that feel less orthogonal and more wave-like. The third type uses a timer-reset rule:
+      when it finds pheromone it clears the cell and resets an internal countdown; when it does not find pheromone it
+      leaves one, decrements the countdown, and only turns after the timer expires. This creates delayed pivots and
+      long straight runs punctuated by sudden corners.
+    </p>
+
+    <h2>Observed Patterns</h2>
+    <p>
+      Mixing all three types in one field generated richer structures than running any type alone. The 90° ants quickly
+      scaffolded rigid lanes, while the 45° ants crossed those lanes with offset spirals and produced moiré-like seams.
+      The timer-reset ants periodically “lock in” to corridors, then break out and cut across dense regions, which causes
+      repeated cycles of ordering and disruption. Over longer runs I noticed that some areas stabilize into striped
+      highways while nearby regions remain turbulent, almost like phase separation. Visually this gave me a useful
+      contrast between geometric regularity and noisy mutation, which is exactly the emergent behavior I wanted to show.
+    </p>
+
+    <h2>Links</h2>
+    <p>
+      Project: <a href="a6.html">Run A6 vants simulation</a>
+    </p>
+  </div>
+</body>
+</html>

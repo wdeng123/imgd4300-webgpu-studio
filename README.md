@@ -19,6 +19,9 @@ WPI · D-Term 2026 · Instructor: Charlie Roberts
 | `a5.html` | A5 particle simulation project |
 | `a5.js` | A5 compute + render particle pipeline |
 | `a5-doc.html` | A5 technical + aesthetic explanation |
+| `a6.html` | A6 Langton vants simulation |
+| `a6.js` | A6 compute + render vant behaviors |
+| `a6-doc.html` | A6 behavior analysis + reflection |
 | `A1_A2_Checklist.md` | Personal submission checklist |
 
 ## Assignment Notes
@@ -26,6 +29,7 @@ WPI · D-Term 2026 · Instructor: Charlie Roberts
 - **A3** is a fullscreen fragment-shader piece with webcam feedback, noise, and chromatic distortion.
 - **A4** is a GPU Gray–Scott reaction-diffusion simulation with live controls for `feed`, `kill`, `diffusion A`, and `diffusion B`, plus a flow-field option and click-based painting.
 - **A5** is a WebGPU particle burst system with real-time controls for gravity, drag, burst energy, and spawn radius.
+- **A6** is a Langton-style ant simulation with three concurrent behavior types (classic 90°, diagonal 45°, and timer-reset turns) sharing one pheromone grid.
 
 ## Deployment
 
