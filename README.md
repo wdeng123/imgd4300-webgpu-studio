@@ -1,6 +1,7 @@
 # imgd4300-webgpu-studio
 
-Personal course website for **IMGD/CS 4300: Graphics, Simulation, and Aesthetics**  
+Personal course website for **IMGD/CS 4300: Graphics, Simulation, and Aesthetics** : https://wdeng123.github.io/imgd4300-webgpu-studio/
+
 WPI · D-Term 2026 · Instructor: Charlie Roberts
 
 ## Files
