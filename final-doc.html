@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Final Project Write-up — Tactile Morphogenesis Field</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px 18px 90px;
+      background: #08101a;
+      color: #d9e6ff;
+      font-family: "IBM Plex Mono", monospace;
+      line-height: 1.8;
+    }
+    .wrap { max-width: 920px; margin: 0 auto; }
+    h1, h2 { font-family: "Syne", sans-serif; }
+    h1 { font-size: 36px; margin-bottom: 8px; }
+    h2 { margin-top: 28px; color: #8ddcff; font-size: 17px; }
+    p { color: #bbcae8; }
+    a { color: #8ec5ff; }
+    .meta { color: #8fa6cc; font-size: 13px; margin-bottom: 24px; }
+    ul { color: #bbcae8; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Final Project — Tactile Morphogenesis Field</h1>
+    <div class="meta">IMGD/CS 4300 · D-Term 2026 · WebGPU / WGSL / JavaScript</div>
+
+    <h2>Project Summary</h2>
+    <p>
+      For my final project, I built a hybrid WebGPU simulation that combines two ideas from earlier assignments into one unified system.
+      The base layer is a reaction-diffusion field derived from my A4 work, and the second layer is a dense particle system derived from my A5 work.
+      Instead of presenting them as separate visual processes, I connected them so that the chemical field becomes a steering force for the particles,
+      while touch interaction injects new chemical concentrations and bends the motion of the particle layer at the same time. The result is a system that
+      feels less like a static visualization and more like an instrument: each touch changes the simulation state, the direction of flow, and the luminous
+      composition on screen.
+    </p>
+    <p>
+      This project intentionally addresses two of the final-project exploration categories. First, it focuses on interaction by supporting multitouch-style
+      input rather than treating the mouse as a single paint brush. Up to four simultaneous pointers are tracked, and each active touch contributes a local
+      chemical injection plus an alternating directional pull on the particle layer. This lets the user stretch, braid, split, and collide the evolving
+      structures with multiple fingers. Second, it explores representation by transforming the simulation into a more layered visual composition. The raw
+      reaction-diffusion state is rendered as a color-mapped field with edge lighting and temporal accents, while the particles write into a glow buffer
+      that produces a soft bloom-like halo. This gives the project a richer visual identity than simply drawing scalar simulation values directly.
+    </p>
+
+    <h2>Implementation Process and Challenges</h2>
+    <p>
+      The main implementation challenge was combining two GPU simulations in a way that stayed coherent and interactive. The reaction-diffusion portion uses
+      ping-ponged storage buffers for chemical A and B, following the same Gray-Scott style update logic from A4. I added touch painting so active pointers
+      inject B into the field, and I also added a lightweight procedural swirl term to keep the pattern from becoming visually stagnant. The particle layer
+      stores position, velocity, life, and a seed value for each particle in its own ping-ponged buffers. On each frame, particles sample the reaction-diffusion
+      field to estimate a local gradient, then combine that gradient with a curl-like perpendicular force and with touch-driven attraction or deflection. This
+      makes the particles orbit, fold, and stream through the chemical structure rather than simply floating above it.
+    </p>
+    <p>
+      One practical difficulty was organizing the work so both simulations could run inside the same compute pass structure provided by my existing `gulls.js`
+      helper workflow. Because the library already supported ping-pong buffers well, I chose to keep the entire project in JavaScript and WGSL rather than
+      rewriting the framework. Another challenge was visual clarity. When I first combined the systems, the particles overwhelmed the field and made the screen
+      look noisy. To solve that, I rendered the particles indirectly into a lower-resolution glow grid and then sampled neighboring cells in the fragment shader
+      to create a broader luminous haze. I also tuned the palette so the reaction-diffusion field carries the larger color structure while the particles act as
+      energetic highlights instead of visual clutter.
+    </p>
+    <p>
+      Aesthetic goals were equally important. I wanted the piece to feel like touching a living map or weather system rather than a purely technical demo.
+      The palette moves from deep blue to aqua, coral, and gold so the simulation can suggest heat, growth, sediment, and current all at once. The alternating
+      direction assigned to different touch slots helps create braided motion instead of uniformly dragging everything in one direction, which gives the work a
+      stronger sense of tension and emergence. More generally, the project continues my interest in turning computational rules into something that feels tactile,
+      atmospheric, and responsive.
+    </p>
+
+    <h2>Technical + Aesthetic Goals</h2>
+    <ul>
+      <li>Use multitouch interaction as a meaningful simulation input rather than only a UI convenience.</li>
+      <li>Combine earlier course techniques into a more complex final system instead of presenting another isolated assignment.</li>
+      <li>Use the reaction-diffusion field as both simulation content and control data for another visual process.</li>
+      <li>Create a cohesive visual theme with glow, edge lighting, and a restrained but vivid palette.</li>
+      <li>Keep the project real-time in the browser so it can run as part of my course website.</li>
+    </ul>
+
+    <h2>Links</h2>
+    <p>
+      Project: <a href="final.html">Run final project</a>
+    </p>
+  </div>
+</body>
+</html>

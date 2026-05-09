@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Final Project — Tactile Morphogenesis Field</title>
+  <style>
+    :root {
+      --bg: #050811;
+      --panel: rgba(8, 13, 24, 0.78);
+      --line: rgba(126, 170, 255, 0.22);
+      --ink: #e0ebff;
+      --muted: #90a5c7;
+      --accent: #8be3ff;
+      --accent2: #ffbf7f;
+      --accent3: #7ff2c8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: var(--ink); }
+    body { font-family: "IBM Plex Mono", monospace; }
+    canvas { width: 100%; height: 100%; display: block; }
+
+    .top, .panel, .hud {
+      position: fixed;
+      z-index: 5;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
+      background: var(--panel);
+    }
+
+    .top {
+      left: 16px; right: 16px; top: 16px;
+      padding: 14px 16px;
+      display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    .eyebrow { color: var(--accent3); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
+    .title { color: #fff; font-size: clamp(22px, 4vw, 34px); font-family: "Syne", sans-serif; line-height: 1; margin: 4px 0 8px; }
+    .subtitle { color: var(--muted); font-size: 12px; max-width: 760px; }
+
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font: inherit;
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .btn:hover { color: var(--accent); border-color: var(--accent); }
+
+    .panel {
+      left: 16px; bottom: 16px;
+      width: min(380px, calc(100vw - 32px));
+      padding: 16px;
+      max-height: calc(100vh - 140px);
+      overflow: auto;
+    }
+    .section + .section { margin-top: 18px; padding-top: 18px; border-top: 1px solid rgba(126,170,255,.12); }
+    .section-title { color: var(--accent3); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 12px; }
+    .row { margin-bottom: 12px; }
+    .row:last-child { margin-bottom: 0; }
+    .label { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 12px; }
+    .label span:last-child { color: var(--accent2); }
+    input[type="range"] { width: 100%; }
+    .small { color: var(--muted); font-size: 11px; line-height: 1.6; margin-top: 8px; }
+
+    .hud {
+      right: 16px; bottom: 16px;
+      min-width: 230px;
+      padding: 14px 16px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+    .hud strong { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <canvas></canvas>
+
+  <div class="top">
+    <div>
+      <div class="eyebrow">Final Project · IMGD/CS 4300</div>
+      <div class="title">Tactile Morphogenesis Field</div>
+      <div class="subtitle">A multitouch reaction-diffusion ecosystem whose chemical trails steer a second particle layer. Touch with one or more fingers to inject chemical B, bend the particle stream, and sculpt luminous growth.</div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="pauseBtn">Pause: Off</button>
+      <button class="btn" id="resetBtn">Reset Field</button>
+      <button class="btn" id="clearBtn">Clear Touches</button>
+      <a class="btn" href="final-doc.html" target="_blank">Write-up</a>
+      <a class="btn" href="index.html">Course Index</a>
+    </div>
+  </div>
+
+  <aside class="panel">
+    <div class="section">
+      <div class="section-title">Simulation</div>
+      <div class="row"><div class="label"><span>Feed</span><span id="feedValue">0.034</span></div><input id="feedSlider" type="range" min="0.020" max="0.070" step="0.001" value="0.034" /></div>
+      <div class="row"><div class="label"><span>Kill</span><span id="killValue">0.062</span></div><input id="killSlider" type="range" min="0.040" max="0.080" step="0.001" value="0.062" /></div>
+      <div class="row"><div class="label"><span>Swirl Field</span><span id="swirlValue">1.12</span></div><input id="swirlSlider" type="range" min="0.10" max="2.50" step="0.01" value="1.12" /></div>
+      <div class="row"><div class="label"><span>Particle Speed</span><span id="speedValue">1.00</span></div><input id="speedSlider" type="range" min="0.20" max="1.80" step="0.01" value="1.00" /></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Touch Interaction</div>
+      <div class="row"><div class="label"><span>Brush Radius</span><span id="brushValue">0.09</span></div><input id="brushSlider" type="range" min="0.03" max="0.20" step="0.01" value="0.09" /></div>
+      <div class="row"><div class="label"><span>Touch Force</span><span id="forceValue">1.35</span></div><input id="forceSlider" type="range" min="0.20" max="2.50" step="0.01" value="1.35" /></div>
+      <p class="small">Desktop: drag with mouse. Mobile / trackpad: use multiple touches at once. Different touches alternate clockwise / counterclockwise pull directions so the field braids rather than only smears.</p>
+    </div>
+  </aside>
+
+  <aside class="hud">
+    <div><strong>Status:</strong> hybrid GPU simulation</div>
+    <div><strong>FPS:</strong> <span id="fpsText">--</span></div>
+    <div><strong>Frames:</strong> <span id="frameText">0</span></div>
+    <div><strong>Active touches:</strong> <span id="touchCount">0</span></div>
+    <div style="margin-top:8px;">Requirements covered: multitouch interaction + enhanced representation/post-processing style rendering.</div>
+  </aside>
+
+  <script type="module" src="final.js"></script>
+</body>
+</html>
