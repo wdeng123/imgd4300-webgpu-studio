@@ -21,12 +21,38 @@
     a { color: #8ec5ff; }
     .meta { color: #8fa6cc; font-size: 13px; margin-bottom: 24px; }
     ul { color: #bbcae8; }
+    .video-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 100%;
+      aspect-ratio: 16 / 9;
+      margin-top: 8px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+    }
+    .video-wrap iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Final Project — Tactile Morphogenesis Field</h1>
     <div class="meta">IMGD/CS 4300 · D-Term 2026 · WebGPU / WGSL / JavaScript</div>
+      
+    <!-- Video -->
+    <section>
+      <h2>Demo Video</h2>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/1csBpK7CWKA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </section>
 
     <h2>Project Summary</h2>
     <p>
